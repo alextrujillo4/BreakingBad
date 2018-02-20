@@ -12,7 +12,7 @@ import java.awt.Graphics;
 
 /**
  *
- * @author antoniomejorado
+ * @author Esthephany Ayala Yañez 
  */
 public class Brick extends Item{
 
