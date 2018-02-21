@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 public class Assets {
     public static BufferedImage background; // to store background image
     public static BufferedImage bar;     // to store the bar image
+    public static BufferedImage gameOver;
 
     /**
      * initializing the images of the game
@@ -21,6 +22,7 @@ public class Assets {
     public static void init() {
         background = ImageLoader.loadImage("/images/Background.jpg");
         bar = ImageLoader.loadImage("/images/mario.png");
+        gameOver= ImageLoader.loadImage("/images/GameOver.png");
     }
     
 }

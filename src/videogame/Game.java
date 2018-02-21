@@ -6,6 +6,7 @@
 package videogame;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class Game implements Runnable {
     private Ball ball;              // little ball
     private ArrayList<Brick> bricks; // bricks
     private KeyManager keyManager;  // to manage the keyboard
-    
+    private int score;
     
     /**
      * to create title, width and height and set the game is still not running
@@ -47,6 +48,7 @@ public class Game implements Runnable {
         started = false;
         gameover = false;
         keyManager = new KeyManager();
+        score = 0;
     }
     
     /**
@@ -108,7 +110,7 @@ public class Game implements Runnable {
         long now;
         // initializing last time to the computer time in nanosecs
         long lastTime = System.nanoTime();
-        while (!gameover) {
+        while (running) {
             // setting the time now to the actual time
             now = System.nanoTime();
             // acumulating to delta the difference between times in timeTick units
@@ -158,7 +160,8 @@ public class Game implements Runnable {
                 
                 ball.setSpeedY(ball.getSpeedY()*  -1);
                 bricks.remove(brick);
-                //i--;
+                i--;
+                score += 5;
             }
         }
         }
@@ -169,8 +172,26 @@ public class Game implements Runnable {
         }
         
         //Check colision Bottom
+        if(ball.getY()<= -150){
+            gameover=true;
+        }
     
 
+    }
+    private void drawGameOver(Graphics g){
+       // g.setColor(Color.BLACK);
+        //g.setFont(new Font ("arial",Font.PLAIN, 100));
+        //g.drawString("Game over",150,this.height/2);
+         g.drawImage(Assets.gameOver, 0,0, getWidth(), getHeight(), null);
+    }
+    
+    private void drawScore(Graphics g){
+        String a = Integer.toString(score);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font ("arial",Font.PLAIN, 50));
+        
+        g.drawString(a,20,450);
+        
     }
     
     private void render() {
@@ -189,16 +210,25 @@ public class Game implements Runnable {
         {
             g = bs.getDrawGraphics();
             g.drawImage(Assets.background, 0, 0, width, height, null);
+            
+            if(!gameover){
             bar.render(g);
             ball.render(g);
             for (Brick brick : bricks) {
                 brick.render(g);
+            }
+            drawScore(g);
+            }
+            
+            if(gameover){
+            drawGameOver(g);
             }
             bs.show();
             g.dispose();
         }
        
     }
+    
     
     /**
      * setting the thead for the game
