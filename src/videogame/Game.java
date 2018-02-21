@@ -123,6 +123,7 @@ public class Game implements Runnable {
                 delta --;
             }
         }
+      
         stop();
     }
 
