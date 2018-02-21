@@ -14,7 +14,7 @@ import java.util.Set;
 
 /**
  *
- * @author antoniomejorado
+ * @author Esthephany Ayala Yañez 
  */
 public class Game implements Runnable {
     private BufferStrategy bs;      // to have several buffers when displaying

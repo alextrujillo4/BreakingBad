@@ -10,7 +10,7 @@ import java.awt.Graphics;
 
 /**
  *
- * @author antoniomejorado
+ * @author Esthephany Ayala Yañez 
  */
 public class Bar extends Item{
 
