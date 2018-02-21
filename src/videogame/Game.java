@@ -153,11 +153,14 @@ public class Game implements Runnable {
         // check collision bricks versus ball
         for (int i = 0; i < bricks.size(); i++) {
             Brick brick = (Brick) bricks.get(i);
+            if (brick != null ){
             if (ball.intersects(brick)) {
+                
+                ball.setSpeedY(ball.getSpeedY()*  -1);
                 bricks.remove(brick);
-                ball.setSpeedY(ball.getSpeedY() * -1);
-                i--;
+                //i--;
             }
+        }
         }
         
         // check collision ball versus bar
