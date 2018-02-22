@@ -10,7 +10,7 @@ import java.awt.Graphics;
 
 /**
  *
- * @author antoniomejorado
+ * @author Esthephany Ayala Yañez 
  */
 public class Ball extends Item{
 
@@ -63,7 +63,12 @@ public class Ball extends Item{
         
         // collision with walls Y
         if(getY() >= game.getHeight()){
-            game.setGameover(true);
+           // game.setGameover(true);
+           game.setVidas(game.getVidas() - 1);
+           game.setLost(true);
+           setSpeedY(0);
+           setSpeedX(0);
+           setY(game.getHeight() - 1);
         }
         
         

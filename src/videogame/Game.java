@@ -6,6 +6,7 @@
 package videogame;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.Set;
 
 /**
  *
- * @author antoniomejorado
+ * @author Esthephany Ayala Yañez 
  */
 public class Game implements Runnable {
     private BufferStrategy bs;      // to have several buffers when displaying
@@ -29,9 +30,11 @@ public class Game implements Runnable {
     private boolean gameover;
     private Bar bar;          // to use a bar
     private Ball ball;              // little ball
+    private int vidas ;
+    private boolean lost;
     private ArrayList<Brick> bricks; // bricks
     private KeyManager keyManager;  // to manage the keyboard
-    
+    private int score;
     
     /**
      * to create title, width and height and set the game is still not running
@@ -47,6 +50,9 @@ public class Game implements Runnable {
         started = false;
         gameover = false;
         keyManager = new KeyManager();
+        score = 0;
+        lost = false;
+        vidas = 3;
     }
     
     /**
@@ -108,7 +114,7 @@ public class Game implements Runnable {
         long now;
         // initializing last time to the computer time in nanosecs
         long lastTime = System.nanoTime();
-        while (!gameover) {
+        while (running) {
             // setting the time now to the actual time
             now = System.nanoTime();
             // acumulating to delta the difference between times in timeTick units
@@ -133,41 +139,83 @@ public class Game implements Runnable {
     
     private void tick() {
         keyManager.tick();
-        // if space and game has not started
-        if (this.getKeyManager().space && !this.isStarted()) {
-            this.setStarted(true);
-            ball.setSpeedX(1);
-            ball.setSpeedY(-1);
-        } 
-        // moving bar
-        bar.tick();
-        // if game has started
-        if (this.isStarted()) {
-            // moving the ball
-            ball.tick();
-        } else {
-            // moving the ball based on the bar
-            ball.setX(bar.getX() + bar.getWidth() / 2 - ball.getWidth() / 2);
-        }
         
-        // check collision bricks versus ball
-        for (int i = 0; i < bricks.size(); i++) {
-            Brick brick = (Brick) bricks.get(i);
-            if (ball.intersects(brick)) {
-                bricks.remove(brick);
-                ball.setSpeedY(ball.getSpeedY() * -1);
-                i--;
-            }
-        }
-        
-        // check collision ball versus bar
-        if (ball.intersects(bar)) {
-            ball.setSpeedY(ball.getSpeedY() * -1);
-        }
-        
-        //Check colision Bottom
-    
+        if(!gameover){
+            if(!lost){
+                // if space and game has not started
+                if (this.getKeyManager().space && !this.isStarted()) {
+                    this.setStarted(true);
+                    ball.setSpeedX(1);
+                    ball.setSpeedY(-1);
+                } 
+                // moving bar
+                bar.tick();
+                // if game has started
+                if (this.isStarted()) {
+                    // moving the ball
+                    ball.tick();
+                } else {
+                    // moving the ball based on the bar
+                    ball.setX(bar.getX() + bar.getWidth() / 2 - ball.getWidth() / 2);
+                }
 
+                // check collision bricks versus ball
+                for (int i = 0; i < bricks.size(); i++) {
+                    Brick brick = (Brick) bricks.get(i);
+                    if (brick != null ){
+                    if (ball.intersects(brick)) {
+
+                        ball.setSpeedY(ball.getSpeedY()*  -1);
+                        bricks.remove(brick);
+                        i--;
+                        score += 5;
+                    }
+                }
+                }
+
+                // check collision ball versus bar
+                if (ball.intersects(bar)) {
+                    ball.setSpeedY(ball.getSpeedY() * -1);
+                }
+            }// Lost
+            if(this.getKeyManager().isJ()){
+                lost = false;
+                this.started = true;
+                ball.setX(getWidth() / 2 - 10);
+                ball.setY(getHeight() - 120);
+                bar.setX(getWidth() / 2 - 50);
+                bar.setY(getHeight() - 100); 
+            }  
+        }//gameover
+    }
+    private void drawGameOver(Graphics g){
+       // Show Game Over
+        g.drawImage(Assets.gameOver, 0,0, getWidth(), getHeight(), null);
+    }
+    
+     private void drawLives(Graphics g, int lnumber){
+        if( lnumber == 3)
+            g.drawImage(Assets.lives3, this.width- 160 , this.height -50 , 150, 40, null);
+        else if ( lnumber == 2)
+            g.drawImage(Assets.lives2, this.width- 160 , this.height -50 , 150, 40, null);
+        else if ( lnumber == 1)
+            g.drawImage(Assets.lives1, this.width- 160 , this.height -50 , 150, 40, null);
+        else if ( lnumber <= 0)
+            g.drawImage(Assets.livesNone,  this.width- 160 , this.height -50 , 150, 40, null);
+    }
+     
+      private void drawLost(Graphics g){
+       // Show LOST!!
+        g.drawImage(Assets.lost, (this.width / 2), (this.height / 2), 400 , 400, null);
+    }
+    
+    private void drawScore(Graphics g){
+        String a = Integer.toString(score);
+        g.setColor(Color.BLACK);
+        g.setFont(new Font ("arial",Font.PLAIN, 50));
+        
+        g.drawString(a,20,450);
+        
     }
     
     private void render() {
@@ -181,21 +229,35 @@ public class Game implements Runnable {
         */
         if (bs == null) {
             display.getCanvas().createBufferStrategy(3);
-        }
-        else
-        {
+        }else{
             g = bs.getDrawGraphics();
             g.drawImage(Assets.background, 0, 0, width, height, null);
-            bar.render(g);
-            ball.render(g);
-            for (Brick brick : bricks) {
-                brick.render(g);
+            
+            
+            if(!gameover){
+                bar.render(g);
+                ball.render(g);
+                for (Brick brick : bricks) {
+                    brick.render(g);
+                }
+                drawScore(g);
+                drawLives(g,vidas);
             }
+            
+            if (gameover){
+                drawGameOver(g);
+            }
+            
+            if (lost){
+                drawLost(g);
+            }
+            
             bs.show();
             g.dispose();
         }
        
     }
+    
     
     /**
      * setting the thead for the game
@@ -300,6 +362,30 @@ public class Game implements Runnable {
 
     public void setBricks(ArrayList<Brick> bricks) {
         this.bricks = bricks;
+    }
+
+    public int getVidas() {
+        return vidas;
+    }
+
+    public void setVidas(int vidas) {
+        this.vidas = vidas;
+    }
+
+    public boolean isLost() {
+        return lost;
+    }
+
+    public void setLost(boolean lost) {
+        this.lost = lost;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 
  

@@ -9,11 +9,21 @@ import java.awt.image.BufferedImage;
 
 /**
  *
- * @author antoniomejorado
+ * @author Esthephany Ayala Yañez 
  */
 public class Assets {
     public static BufferedImage background; // to store background image
     public static BufferedImage bar;     // to store the bar image
+    public static BufferedImage gameOver;
+    
+    public static BufferedImage lives3;
+    public static BufferedImage lives2;
+    public static BufferedImage lives1;
+    public static BufferedImage livesNone;
+    
+    
+    public static BufferedImage lost;
+    
 
     /**
      * initializing the images of the game
@@ -21,6 +31,14 @@ public class Assets {
     public static void init() {
         background = ImageLoader.loadImage("/images/Background.jpg");
         bar = ImageLoader.loadImage("/images/mario.png");
+        gameOver= ImageLoader.loadImage("/images/GameOver.png");
+        
+        lives3 = ImageLoader.loadImage("/images/vidas3.png");
+        lives2 = ImageLoader.loadImage("/images/vidas2.png");
+        lives1= ImageLoader.loadImage("/images/vidas1.png");
+        livesNone= ImageLoader.loadImage("/images/novidas.png");
+        
+        lost= ImageLoader.loadImage("/images/Lost.png");
     }
     
 }

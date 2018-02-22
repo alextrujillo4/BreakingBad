@@ -19,8 +19,66 @@ public class KeyManager implements KeyListener {
     public boolean left;    // flag to move left the bar
     public boolean right;   // flag to move right the bar
     public boolean space;   // flag to space
+    public boolean j;
     
     private boolean keys[];  // to store all the flags for every key
+
+    public boolean isUp() {
+        return up;
+    }
+
+    public void setUp(boolean up) {
+        this.up = up;
+    }
+
+    public boolean isDown() {
+        return down;
+    }
+
+    public void setDown(boolean down) {
+        this.down = down;
+    }
+
+    public boolean isLeft() {
+        return left;
+    }
+
+    public void setLeft(boolean left) {
+        this.left = left;
+    }
+
+    public boolean isRight() {
+        return right;
+    }
+
+    public void setRight(boolean right) {
+        this.right = right;
+    }
+
+    public boolean isSpace() {
+        return space;
+    }
+
+    public void setSpace(boolean space) {
+        this.space = space;
+    }
+
+    public boolean isJ() {
+        return j;
+    }
+
+    public void setJ(boolean j) {
+        this.j = j;
+    }
+
+    public boolean[] getKeys() {
+        return keys;
+    }
+
+    public void setKeys(boolean[] keys) {
+        this.keys = keys;
+    }
+    
     
     public KeyManager() {
         keys = new boolean[256];
@@ -33,13 +91,22 @@ public class KeyManager implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         // set true to every key pressed
-        keys[e.getKeyCode()] = true;
+        // set true to every key pressed
+        if(e.getKeyCode() != KeyEvent.VK_J){
+            keys[e.getKeyCode()] = true;
+        }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // set false to every key released
-        keys[e.getKeyCode()] = false;
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_J:
+                keys[KeyEvent.VK_J] = !keys[KeyEvent.VK_J];
+                break;
+            default:
+                keys[e.getKeyCode()] = false;
+                break;
+        }
     }
     
     /**
@@ -51,5 +118,6 @@ public class KeyManager implements KeyListener {
         left = keys[KeyEvent.VK_LEFT];
         right = keys[KeyEvent.VK_RIGHT];
         space = keys[KeyEvent.VK_SPACE];
+        j = keys[KeyEvent.VK_J]; 
     }
 }
