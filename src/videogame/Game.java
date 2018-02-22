@@ -142,6 +142,7 @@ public class Game implements Runnable {
         
         if(!gameover){
             if(!lost){
+                if(!(this.getKeyManager().p)){
                 // if space and game has not started
                 if (this.getKeyManager().space && !this.isStarted()) {
                     this.setStarted(true);
@@ -177,17 +178,24 @@ public class Game implements Runnable {
                 if (ball.intersects(bar)) {
                     ball.setSpeedY(ball.getSpeedY() * -1);
                 }
+            }
             }// Lost
+            else {
             if(this.getKeyManager().isJ()){
                 lost = false;
-                this.started = true;
+                this.started = false;
                 ball.setX(getWidth() / 2 - 10);
                 ball.setY(getHeight() - 120);
                 bar.setX(getWidth() / 2 - 50);
-                bar.setY(getHeight() - 100); 
+                bar.setY(getHeight() - 100);
+               
+                
             }  
+            }
         }//gameover
-    }
+    }    
+    
+    
     private void drawGameOver(Graphics g){
        // Show Game Over
         g.drawImage(Assets.gameOver, 0,0, getWidth(), getHeight(), null);
@@ -206,7 +214,7 @@ public class Game implements Runnable {
      
       private void drawLost(Graphics g){
        // Show LOST!!
-        g.drawImage(Assets.lost, (this.width / 2), (this.height / 2), 400 , 400, null);
+        g.drawImage(Assets.lost, 200, 50, 400 , 400, null);
     }
     
     private void drawScore(Graphics g){

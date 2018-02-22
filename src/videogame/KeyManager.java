@@ -20,6 +20,7 @@ public class KeyManager implements KeyListener {
     public boolean right;   // flag to move right the bar
     public boolean space;   // flag to space
     public boolean j;
+    public boolean p;
     
     private boolean keys[];  // to store all the flags for every key
 
@@ -92,7 +93,7 @@ public class KeyManager implements KeyListener {
     public void keyPressed(KeyEvent e) {
         // set true to every key pressed
         // set true to every key pressed
-        if(e.getKeyCode() != KeyEvent.VK_J){
+        if(e.getKeyCode() != KeyEvent.VK_J && e.getKeyCode() != KeyEvent.VK_P ){
             keys[e.getKeyCode()] = true;
         }
     }
@@ -103,9 +104,15 @@ public class KeyManager implements KeyListener {
             case KeyEvent.VK_J:
                 keys[KeyEvent.VK_J] = !keys[KeyEvent.VK_J];
                 break;
+            case KeyEvent.VK_P:
+                keys[KeyEvent.VK_P] = !keys[KeyEvent.VK_P];
+                break;
             default:
                 keys[e.getKeyCode()] = false;
                 break;
+            
+                
+               
         }
     }
     
@@ -119,5 +126,6 @@ public class KeyManager implements KeyListener {
         right = keys[KeyEvent.VK_RIGHT];
         space = keys[KeyEvent.VK_SPACE];
         j = keys[KeyEvent.VK_J]; 
+        p=keys[KeyEvent.VK_P];
     }
 }
