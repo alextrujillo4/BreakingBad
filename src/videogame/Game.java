@@ -114,6 +114,7 @@ public class Game implements Runnable {
         keyManager.tick();
         if(!gameover){
             if(!lost){
+
                 //To pause the game
                 pause = this.getKeyManager().p;
                 if(!(pause)){ //IF IS NOT PAUSED
@@ -180,6 +181,7 @@ public class Game implements Runnable {
                     
                     
                 }
+
             }else{
                //When game is LOST (live - 1), keymanager keeps listening for "J" ro init again
                 if(this.getKeyManager().isJ()){
@@ -229,8 +231,8 @@ public class Game implements Runnable {
         else if ( lnumber <= 0)
             g.drawImage(Assets.livesNone,  this.width- 160 , this.height -50 , 150, 40, null);
     }
-     
 
+    
     private void drawScore(Graphics g){
         String a = Integer.toString(score);
         g.setColor(Color.BLACK);

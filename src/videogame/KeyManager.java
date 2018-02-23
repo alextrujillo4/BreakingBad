@@ -21,7 +21,7 @@ public class KeyManager implements KeyListener {
     public boolean space;   // flag to space
     public boolean j;
     public boolean p;
-     public boolean r;
+    public boolean r;
     private boolean keys[];  // to store all the flags for every key
 
     public boolean[] getKeys() {
