@@ -9,9 +9,12 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+import static java.lang.Integer.max;
+import static java.lang.Math.random;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -31,6 +34,7 @@ public class Game implements Runnable {
     private Bar bar;          // to use a bar
     private Ball ball;              // little ball
     private int vidas ;
+    private boolean pause;
     private boolean lost;
     private ArrayList<Brick> bricks; // bricks
     private KeyManager keyManager;  // to manage the keyboard
@@ -49,36 +53,14 @@ public class Game implements Runnable {
         running = false;
         started = false;
         gameover = false;
+        pause = false;
         keyManager = new KeyManager();
         score = 0;
         lost = false;
         vidas = 3;
     }
     
-    /**
-     * To get the width of the game window
-     * @return an <code>int</code> value with the width
-     */
-    public int getWidth() {
-        return width;
-    }
 
-    /**
-     * To get the height of the game window
-     * @return an <code>int</code> value with the height
-     */
-    public int getHeight() {
-        return height;
-    }
-
-    public boolean isStarted() {
-        return started;
-    }
-
-    public void setStarted(boolean started) {
-        this.started = started;
-    }
-    
     
     /**
      * initializing the display window of the game
@@ -88,16 +70,7 @@ public class Game implements Runnable {
          Assets.init();
          bar = new Bar(getWidth() / 2 - 50, getHeight() - 100, 100, 25, this);
          ball = new Ball(getWidth() / 2 - 10, getHeight() - 120, 20, 20, 0, 0, this);
-         bricks = new ArrayList<Brick>();
-         int width_brick = getWidth() / 10 - 6;
-         int height_brick = getHeight() / 3 / 5  - 10;
-         for (int i = 0; i < 10; i++) {
-             for (int j = 0; j < 5; j++) {
-                 Brick brick = new Brick(i * (width_brick + 3) + 15 , 
-                         j * (height_brick + 5) + 15 , width_brick, height_brick, this);
-                 bricks.add(brick);
-             }
-         }
+         generateEnemies();
          display.getJframe().addKeyListener(keyManager);
     }
     
@@ -139,61 +112,98 @@ public class Game implements Runnable {
     
     private void tick() {
         keyManager.tick();
-        
         if(!gameover){
             if(!lost){
-                if(!(this.getKeyManager().p)){
-                // if space and game has not started
-                if (this.getKeyManager().space && !this.isStarted()) {
-                    this.setStarted(true);
-                    ball.setSpeedX(1);
-                    ball.setSpeedY(-1);
-                } 
-                // moving bar
-                bar.tick();
-                // if game has started
-                if (this.isStarted()) {
-                    // moving the ball
-                    ball.tick();
-                } else {
-                    // moving the ball based on the bar
-                    ball.setX(bar.getX() + bar.getWidth() / 2 - ball.getWidth() / 2);
-                }
 
-                // check collision bricks versus ball
-                for (int i = 0; i < bricks.size(); i++) {
-                    Brick brick = (Brick) bricks.get(i);
-                    if (brick != null ){
-                    if (ball.intersects(brick)) {
+                //To pause the game
+                pause = this.getKeyManager().p;
+                if(!(pause)){ //IF IS NOT PAUSED
+                    // if space and game has not started
+                    if (this.getKeyManager().space && !this.isStarted()) {
+                        this.setStarted(true);
+                        ball.setSpeedX(1);
+                        ball.setSpeedY(-1);
+                    } 
 
-                        ball.setSpeedY(ball.getSpeedY()*  -1);
-                        bricks.remove(brick);
-                        i--;
-                        score += 5;
+                    // moving bar
+                    bar.tick();
+
+                    // if game has started
+                    if (this.isStarted()) {
+                        // moving the ball
+                        ball.tick();
+                    } else {
+                        // moving the ball based on the bar
+                        ball.setX(bar.getX() + bar.getWidth() / 2 - ball.getWidth() / 2);
                     }
-                }
+
+                    // check collision bricks versus ball
+                    for (int i = 0; i < bricks.size(); i++) {
+                        Brick brick = (Brick) bricks.get(i);
+                        if (brick != null ){
+                            if (ball.intersects(brick)) {
+                                if(brick.isPower()){
+                                    bar.setWidth(bar.getWidth() +bar.getWidth()/4 );
+                                    score += 10;
+                                }
+                                ball.setSpeedY((ball.getSpeedY() *  - 1)+3);
+                                bricks.remove(brick);
+                                i--;
+                                score += 5;
+                            }
+                        }
+                    }
+
+                    // check collision ball versus bar
+                    if (ball.intersects(bar)) {
+                        ball.setSpeedY(ball.getSpeedY() * -1);
+                    }
+
+                    // collision with walls Y
+                    if(ball.getY() >= getHeight()){
+                       // game.setGameover(true);
+                       setVidas(getVidas() - 1);
+                       //****GAMEOVER IF
+                       if(getVidas() == 0)
+                           gameover = true;
+                       else
+                       setLost(true);
+                       //**** END GAMEOVER IF
+                       ball.setSpeedY(0);
+                       ball.setSpeedX(0);
+                       ball.setY(getHeight() - 1);
+                    } 
+                    
+                    //if(this.getKeyManager().isP()){
+                      //  sleep();
+                        //pause = true;
+                   // }
+                    
+                    
                 }
 
-                // check collision ball versus bar
-                if (ball.intersects(bar)) {
-                    ball.setSpeedY(ball.getSpeedY() * -1);
-                }
+            }else{
+               //When game is LOST (live - 1), keymanager keeps listening for "J" ro init again
+                if(this.getKeyManager().isJ()){
+                    lost = false;
+                    started = false;
+                    resetBall();
+                    resetBar();
+                } 
+            }//END LOST********
+        }else{
+            //When GAMEOVER  keeps listening for "R" to reinit game
+            if(this.getKeyManager().isR()){
+                gameover = false;
+                started = false;
+                vidas = 3;
+                score = 0;
+                resetBall();
+                resetBar();
+                generateEnemies();
             }
-            }// Lost
-            else {
-            if(this.getKeyManager().isJ()){
-                lost = false;
-                this.started = false;
-                ball.setX(getWidth() / 2 - 10);
-                ball.setY(getHeight() - 120);
-                bar.setX(getWidth() / 2 - 50);
-                bar.setY(getHeight() - 100);
-               
-                
-            }  
-            }
-        }//gameover
-    }    
+        }  //END GAMEOVER ********
+    }//END TICK();********
     
     
     private void drawGameOver(Graphics g){
@@ -201,7 +211,17 @@ public class Game implements Runnable {
         g.drawImage(Assets.gameOver, 0,0, getWidth(), getHeight(), null);
     }
     
-     private void drawLives(Graphics g, int lnumber){
+    private void drawLost(Graphics g){
+       // Show LOST!!
+        g.drawImage(Assets.lost, (this.width / 2) - 200, (this.height / 2) - 200, 400 , 400, null);
+    }
+    
+     private void drawPause(Graphics g){
+       // Show LOST!!
+        g.drawImage(Assets.pause, (this.width / 2) - 200, (this.height / 2) - 200, 400 , 400, null);
+    }
+    
+    private void drawLives(Graphics g, int lnumber){
         if( lnumber == 3)
             g.drawImage(Assets.lives3, this.width- 160 , this.height -50 , 150, 40, null);
         else if ( lnumber == 2)
@@ -211,17 +231,13 @@ public class Game implements Runnable {
         else if ( lnumber <= 0)
             g.drawImage(Assets.livesNone,  this.width- 160 , this.height -50 , 150, 40, null);
     }
-     
-      private void drawLost(Graphics g){
-       // Show LOST!!
-        g.drawImage(Assets.lost, 200, 50, 400 , 400, null);
-    }
+
     
     private void drawScore(Graphics g){
         String a = Integer.toString(score);
         g.setColor(Color.BLACK);
         g.setFont(new Font ("arial",Font.PLAIN, 50));
-        
+ 
         g.drawString(a,20,450);
         
     }
@@ -250,20 +266,20 @@ public class Game implements Runnable {
                 }
                 drawScore(g);
                 drawLives(g,vidas);
+            }else{
+            drawGameOver(g);
             }
-            
-            if (gameover){
-                drawGameOver(g);
-            }
-            
-            if (lost){
+
+            if (lost && !gameover){
                 drawLost(g);
+            }
+            if (pause && !lost && !gameover){
+                drawPause(g);
             }
             
             bs.show();
             g.dispose();
         }
-       
     }
     
     
@@ -292,6 +308,50 @@ public class Game implements Runnable {
         }
     }
 
+
+    private void sleep() {
+        try        
+            {
+                Thread.sleep(150);
+            } 
+            catch(InterruptedException ex) 
+            {
+                Thread.currentThread().interrupt();
+            }
+    }
+
+    private void generateEnemies() {
+        //Generate New Enemies
+        bricks = new ArrayList<Brick>();
+        int width_brick = getWidth() / 10 - 6;
+        int height_brick = getHeight() / 3 / 5  - 10;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 5; j++) {
+                double randomNum = Math.random() * ( 3 );
+                Brick brick = new Brick(i * (width_brick + 3) + 15 , 
+                        j * (height_brick + 5) + 15 , width_brick, height_brick, this);
+                
+                if(randomNum >= 2.5) 
+                    brick.setPower(true);
+                
+                bricks.add(brick);
+            }
+        }
+    }
+
+    private void resetBar() {
+        bar.setX(getWidth() / 2 - 50);
+        bar.setY(getHeight() - 100);
+    }
+
+    private void resetBall() {
+        //Reset posicion og ball and bar
+        ball.setX(getWidth() / 2 - 10);
+        ball.setY(getHeight() - 120);
+    }
+    
+    
+    
     public BufferStrategy getBs() {
         return bs;
     }
@@ -396,8 +456,27 @@ public class Game implements Runnable {
         this.score = score;
     }
 
- 
-    
+     /**
+     * To get the width of the game window
+     * @return an <code>int</code> value with the width
+     */
+    public int getWidth() {
+        return width;
+    }
 
+    /**
+     * To get the height of the game window
+     * @return an <code>int</code> value with the height
+     */
+    public int getHeight() {
+        return height;
+    }
 
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
 }
