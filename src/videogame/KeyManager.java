@@ -45,7 +45,7 @@ public class KeyManager implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         // set true to every key pressed
-        if (e.getKeyCode()!=KeyEvent.VK_J && e.getKeyCode()!= KeyEvent.VK_P){
+        if (e.getKeyCode()!= KeyEvent.VK_P){
             keys[e.getKeyCode()] = true;
         }
     }
@@ -55,7 +55,7 @@ public class KeyManager implements KeyListener {
          // set true to every key is UP
         switch (e.getKeyCode()) {
              case KeyEvent.VK_J:
-                keys[KeyEvent.VK_J] = !keys[KeyEvent.VK_J];
+                keys[KeyEvent.VK_J] = false ;//keys[KeyEvent.VK_P];
                 break;
             case KeyEvent.VK_R:
                 keys[KeyEvent.VK_R] = false;
