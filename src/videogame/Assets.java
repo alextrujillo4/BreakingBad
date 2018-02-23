@@ -16,6 +16,7 @@ public class Assets {
     public static BufferedImage bar;     // to store the bar image
     public static BufferedImage gameOver;
     public static BufferedImage pause;
+    public static BufferedImage win;
     
     public static BufferedImage lives3;
     public static BufferedImage lives2;
@@ -33,6 +34,7 @@ public class Assets {
         background = ImageLoader.loadImage("/images/Background.jpg");
         bar = ImageLoader.loadImage("/images/mario.png");
         gameOver= ImageLoader.loadImage("/images/GameOver.png");
+        win = ImageLoader.loadImage("/images/ganar.png");
         
         lives3 = ImageLoader.loadImage("/images/vidas3.png");
         lives2 = ImageLoader.loadImage("/images/vidas2.png");

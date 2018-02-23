@@ -39,6 +39,8 @@ public class Game implements Runnable {
     private ArrayList<Brick> bricks; // bricks
     private KeyManager keyManager;  // to manage the keyboard
     private int score;
+    private boolean win;
+    private int cont;
     
     /**
      * to create title, width and height and set the game is still not running
@@ -58,6 +60,8 @@ public class Game implements Runnable {
         score = 0;
         lost = false;
         vidas = 3;
+        win= false;
+        cont=0;
     }
     
 
@@ -112,17 +116,22 @@ public class Game implements Runnable {
     
     private void tick() {
         keyManager.tick();
+       if(!win){
         if(!gameover){
             if(!lost){
+                
 
                 //To pause the game
                 pause = this.getKeyManager().p;
+               
                 if(!(pause)){ //IF IS NOT PAUSED
+                    
+                   
                     // if space and game has not started
                     if (this.getKeyManager().space && !this.isStarted()) {
                         this.setStarted(true);
-                        ball.setSpeedX(1);
-                        ball.setSpeedY(-1);
+                        ball.setSpeedX(2);
+                        ball.setSpeedY(-2);
                     } 
 
                     // moving bar
@@ -144,14 +153,22 @@ public class Game implements Runnable {
                             if (ball.intersects(brick)) {
                                 if(brick.isPower()){
                                     bar.setWidth(bar.getWidth() +bar.getWidth()/4 );
+                                    ball.setSpeedY((ball.getSpeedY() *  - 1)+3);
                                     score += 10;
                                 }
-                                ball.setSpeedY((ball.getSpeedY() *  - 1)+3);
+                                ball.setSpeedY((ball.getSpeedY() *  - 1));
                                 bricks.remove(brick);
                                 i--;
                                 score += 5;
+                                cont+=1;
                             }
                         }
+                    }
+                    if(cont>5){
+                        bar.setWidth(bar.getWidth()- bar.getWidth()/4);
+                        
+                        cont=0;
+                        
                     }
 
                     // check collision ball versus bar
@@ -166,13 +183,16 @@ public class Game implements Runnable {
                        //****GAMEOVER IF
                        if(getVidas() == 0)
                            gameover = true;
-                       else
+                       else if(getVidas()>=1)
                        setLost(true);
+                       
                        //**** END GAMEOVER IF
                        ball.setSpeedY(0);
                        ball.setSpeedX(0);
                        ball.setY(getHeight() - 1);
                     } 
+                    if(bricks.size() <=49)
+                           win=true;
                     
                     //if(this.getKeyManager().isP()){
                       //  sleep();
@@ -203,8 +223,15 @@ public class Game implements Runnable {
                 generateEnemies();
             }
         }  //END GAMEOVER ********
-    }//END TICK();********
+        
+       }
+    }
+//END TICK();********
     
+    private void drawWin(Graphics g){
+        //show Win
+        g.drawImage(Assets.win,0,0,getWidth(), getHeight(), null);
+    }
     
     private void drawGameOver(Graphics g){
        // Show Game Over
@@ -266,15 +293,20 @@ public class Game implements Runnable {
                 }
                 drawScore(g);
                 drawLives(g,vidas);
-            }else{
+            }else if(gameover){
             drawGameOver(g);
             }
+          
 
             if (lost && !gameover){
                 drawLost(g);
             }
             if (pause && !lost && !gameover){
                 drawPause(g);
+            }
+            if(win && !lost && !pause && !lost &&!gameover){
+                
+                drawWin(g);
             }
             
             bs.show();

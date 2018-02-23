@@ -31,8 +31,8 @@ public class Bar extends Item{
            setX(getX() + 6);
         }
         // collision with walls
-        if (getX() + 100 >= game.getWidth()) {
-            setX(game.getWidth() - 100);
+        if (getX()+ 150 >= game.getWidth()) {
+            setX(game.getWidth() - 150);
         }
         else if (getX() <= 0) {
             setX(0);

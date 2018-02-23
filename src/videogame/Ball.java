@@ -42,6 +42,12 @@ public class Ball extends Item{
             setX(0);
             setSpeedX(getSpeedX() * -1);
         }
+        
+        //collision with wall Y up
+        if(getY() <= -20){
+            setY(0);
+            setSpeedY(getSpeedY()*-1);
+        }
     }
 
     @Override
