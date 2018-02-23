@@ -55,7 +55,7 @@ public class Game implements Runnable {
         keyManager = new KeyManager();
         score = 0;
         lost = false;
-        vidas = 3;
+        vidas = 1;
     }
     
 
@@ -68,16 +68,7 @@ public class Game implements Runnable {
          Assets.init();
          bar = new Bar(getWidth() / 2 - 50, getHeight() - 100, 100, 25, this);
          ball = new Ball(getWidth() / 2 - 10, getHeight() - 120, 20, 20, 0, 0, this);
-         bricks = new ArrayList<Brick>();
-         int width_brick = getWidth() / 10 - 6;
-         int height_brick = getHeight() / 3 / 5  - 10;
-         for (int i = 0; i < 10; i++) {
-             for (int j = 0; j < 5; j++) {
-                 Brick brick = new Brick(i * (width_brick + 3) + 15 , 
-                         j * (height_brick + 5) + 15 , width_brick, height_brick, this);
-                 bricks.add(brick);
-             }
-         }
+         generateEnemies();
          display.getJframe().addKeyListener(keyManager);
     }
     
@@ -119,9 +110,9 @@ public class Game implements Runnable {
     
     private void tick() {
         keyManager.tick();
-        
         if(!gameover){
             if(!lost){
+                //To pause the game
                 if(!pause){
                     // if space and game has not started
                     if (this.getKeyManager().space && !this.isStarted()) {
@@ -165,7 +156,12 @@ public class Game implements Runnable {
                     if(ball.getY() >= getHeight()){
                        // game.setGameover(true);
                        setVidas(getVidas() - 1);
+                       //****GAMEOVER IF
+                       if(getVidas() == 0)
+                           gameover = true;
+                       else
                        setLost(true);
+                       //**** END GAMEOVER IF
                        ball.setSpeedY(0);
                        ball.setSpeedX(0);
                        ball.setY(getHeight() - 1);
@@ -178,28 +174,37 @@ public class Game implements Runnable {
                     
                     
                 }else{
-                    
+                    //When game is paused, keymanager keeps listening for "P"
                     if(this.getKeyManager().isP()){
                         sleep();
                         pause = false;
                     }
-                    
                  
-                }
+                }//END PAUSE********
             }else{
-                // Lost  checar como cambiar el kemanager para j y que no se quede en false/true
+               //When game is LOST (live - 1), keymanager keeps listening for "J" ro init again
                 if(this.getKeyManager().isJ()){
                     lost = false;
                     started = false;
-                    ball.setX(getWidth() / 2 - 10);
-                    ball.setY(getHeight() - 120);
-                    bar.setX(getWidth() / 2 - 50);
-                    bar.setY(getHeight() - 100); 
+                    resetBall();
+                    resetBar();
                 } 
+            }//END LOST********
+        }else{
+            //When GAMEOVER  keeps listening for "R" to reinit game
+            if(this.getKeyManager().isR()){
+                gameover = false;
+                started = false;
+                vidas = 3;
+                score = 0;
+                resetBall();
+                resetBar();
+                generateEnemies();
             }
- 
-        }//gameover
-    }
+        }  //END GAMEOVER ********
+    }//END TICK();********
+    
+    
     private void drawGameOver(Graphics g){
        // Show Game Over
         g.drawImage(Assets.gameOver, 0,0, getWidth(), getHeight(), null);
@@ -260,16 +265,14 @@ public class Game implements Runnable {
                 }
                 drawScore(g);
                 drawLives(g,vidas);
+            }else{
+            drawGameOver(g);
             }
-            
-            if (gameover){
-                drawGameOver(g);
-            }
-            
-            if (lost){
+
+            if (lost && !gameover){
                 drawLost(g);
             }
-            if (pause){
+            if (pause && !lost && !gameover){
                 drawPause(g);
             }
             
@@ -441,5 +444,30 @@ public class Game implements Runnable {
             {
                 Thread.currentThread().interrupt();
             }
+    }
+
+    private void generateEnemies() {
+        //Generate New Enemies
+        bricks = new ArrayList<Brick>();
+        int width_brick = getWidth() / 10 - 6;
+        int height_brick = getHeight() / 3 / 5  - 10;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 5; j++) {
+                Brick brick = new Brick(i * (width_brick + 3) + 15 , 
+                        j * (height_brick + 5) + 15 , width_brick, height_brick, this);
+                bricks.add(brick);
+            }
+        }
+    }
+
+    private void resetBar() {
+        bar.setX(getWidth() / 2 - 50);
+        bar.setY(getHeight() - 100);
+    }
+
+    private void resetBall() {
+        //Reset posicion og ball and bar
+        ball.setX(getWidth() / 2 - 10);
+        ball.setY(getHeight() - 120);
     }
 }

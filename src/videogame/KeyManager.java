@@ -21,6 +21,7 @@ public class KeyManager implements KeyListener {
     public boolean space;   // flag to space
     public boolean j;
     public boolean p;
+     public boolean r;
     private boolean keys[];  // to store all the flags for every key
 
     public boolean[] getKeys() {
@@ -44,9 +45,7 @@ public class KeyManager implements KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         // set true to every key pressed
-        //if(e.getKeyCode() != KeyEvent.VK_UP){
             keys[e.getKeyCode()] = true;
-        //}
     }
 
     @Override
@@ -55,6 +54,9 @@ public class KeyManager implements KeyListener {
         switch (e.getKeyCode()) {
              case KeyEvent.VK_J:
                 keys[KeyEvent.VK_J] = false ;//keys[KeyEvent.VK_P];
+                break;
+            case KeyEvent.VK_R:
+                keys[KeyEvent.VK_R] = false;
                 break;
                 case KeyEvent.VK_P:
                     keys[KeyEvent.VK_P] = false;
@@ -76,6 +78,7 @@ public class KeyManager implements KeyListener {
         space = keys[KeyEvent.VK_SPACE];
         j = keys[KeyEvent.VK_J]; 
         p = keys[KeyEvent.VK_P]; 
+        r = keys[KeyEvent.VK_R]; 
     }
     
     
@@ -136,5 +139,13 @@ public class KeyManager implements KeyListener {
 
     public void setP(boolean p) {
         this.p = p;
+    }
+    
+      public boolean isR() {
+        return r;
+    }
+
+    public void setR(boolean r) {
+        this.r = r;
     }
 }
