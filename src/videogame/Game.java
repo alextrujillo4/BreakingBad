@@ -12,6 +12,7 @@ import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -31,6 +32,7 @@ public class Game implements Runnable {
     private Bar bar;          // to use a bar
     private Ball ball;              // little ball
     private int vidas ;
+    private boolean pause;
     private boolean lost;
     private ArrayList<Brick> bricks; // bricks
     private KeyManager keyManager;  // to manage the keyboard
@@ -49,36 +51,14 @@ public class Game implements Runnable {
         running = false;
         started = false;
         gameover = false;
+        pause = false;
         keyManager = new KeyManager();
         score = 0;
         lost = false;
         vidas = 3;
     }
     
-    /**
-     * To get the width of the game window
-     * @return an <code>int</code> value with the width
-     */
-    public int getWidth() {
-        return width;
-    }
 
-    /**
-     * To get the height of the game window
-     * @return an <code>int</code> value with the height
-     */
-    public int getHeight() {
-        return height;
-    }
-
-    public boolean isStarted() {
-        return started;
-    }
-
-    public void setStarted(boolean started) {
-        this.started = started;
-    }
-    
     
     /**
      * initializing the display window of the game
@@ -142,50 +122,82 @@ public class Game implements Runnable {
         
         if(!gameover){
             if(!lost){
-                // if space and game has not started
-                if (this.getKeyManager().space && !this.isStarted()) {
-                    this.setStarted(true);
-                    ball.setSpeedX(1);
-                    ball.setSpeedY(-1);
-                } 
-                // moving bar
-                bar.tick();
-                // if game has started
-                if (this.isStarted()) {
-                    // moving the ball
-                    ball.tick();
-                } else {
-                    // moving the ball based on the bar
-                    ball.setX(bar.getX() + bar.getWidth() / 2 - ball.getWidth() / 2);
-                }
+                if(!pause){
+                    // if space and game has not started
+                    if (this.getKeyManager().space && !this.isStarted()) {
+                        this.setStarted(true);
+                        ball.setSpeedX(1);
+                        ball.setSpeedY(-1);
+                    } 
 
-                // check collision bricks versus ball
-                for (int i = 0; i < bricks.size(); i++) {
-                    Brick brick = (Brick) bricks.get(i);
-                    if (brick != null ){
-                    if (ball.intersects(brick)) {
+                    // moving bar
+                    bar.tick();
 
-                        ball.setSpeedY(ball.getSpeedY()*  -1);
-                        bricks.remove(brick);
-                        i--;
-                        score += 5;
+                    // if game has started
+                    if (this.isStarted()) {
+                        // moving the ball
+                        ball.tick();
+                    } else {
+                        // moving the ball based on the bar
+                        ball.setX(bar.getX() + bar.getWidth() / 2 - ball.getWidth() / 2);
                     }
-                }
-                }
 
-                // check collision ball versus bar
-                if (ball.intersects(bar)) {
-                    ball.setSpeedY(ball.getSpeedY() * -1);
+                    // check collision bricks versus ball
+                    for (int i = 0; i < bricks.size(); i++) {
+                        Brick brick = (Brick) bricks.get(i);
+                        if (brick != null ){
+                            if (ball.intersects(brick)) {
+
+                                ball.setSpeedY(ball.getSpeedY()*  -1);
+                                bricks.remove(brick);
+                                i--;
+                                score += 5;
+                            }
+                        }
+                    }
+
+                    // check collision ball versus bar
+                    if (ball.intersects(bar)) {
+                        ball.setSpeedY(ball.getSpeedY() * -1);
+                    }
+
+                    // collision with walls Y
+                    if(ball.getY() >= getHeight()){
+                       // game.setGameover(true);
+                       setVidas(getVidas() - 1);
+                       setLost(true);
+                       ball.setSpeedY(0);
+                       ball.setSpeedX(0);
+                       ball.setY(getHeight() - 1);
+                    } 
+                    
+                    if(this.getKeyManager().isP()){
+                        sleep();
+                        pause = true;
+                    }
+                    
+                    
+                }else{
+                    
+                    if(this.getKeyManager().isP()){
+                        sleep();
+                        pause = false;
+                    }
+                    
+                 
                 }
-            }// Lost
-            if(this.getKeyManager().isJ()){
-                lost = false;
-                this.started = true;
-                ball.setX(getWidth() / 2 - 10);
-                ball.setY(getHeight() - 120);
-                bar.setX(getWidth() / 2 - 50);
-                bar.setY(getHeight() - 100); 
-            }  
+            }else{
+                // Lost  checar como cambiar el kemanager para j y que no se quede en false/true
+                if(this.getKeyManager().isJ()){
+                    lost = false;
+                    started = false;
+                    ball.setX(getWidth() / 2 - 10);
+                    ball.setY(getHeight() - 120);
+                    bar.setX(getWidth() / 2 - 50);
+                    bar.setY(getHeight() - 100); 
+                } 
+            }
+ 
         }//gameover
     }
     private void drawGameOver(Graphics g){
@@ -193,7 +205,17 @@ public class Game implements Runnable {
         g.drawImage(Assets.gameOver, 0,0, getWidth(), getHeight(), null);
     }
     
-     private void drawLives(Graphics g, int lnumber){
+    private void drawLost(Graphics g){
+       // Show LOST!!
+        g.drawImage(Assets.lost, (this.width / 2) - 200, (this.height / 2) - 200, 400 , 400, null);
+    }
+    
+     private void drawPause(Graphics g){
+       // Show LOST!!
+        g.drawImage(Assets.pause, (this.width / 2) - 200, (this.height / 2) - 200, 400 , 400, null);
+    }
+    
+    private void drawLives(Graphics g, int lnumber){
         if( lnumber == 3)
             g.drawImage(Assets.lives3, this.width- 160 , this.height -50 , 150, 40, null);
         else if ( lnumber == 2)
@@ -204,16 +226,12 @@ public class Game implements Runnable {
             g.drawImage(Assets.livesNone,  this.width- 160 , this.height -50 , 150, 40, null);
     }
      
-      private void drawLost(Graphics g){
-       // Show LOST!!
-        g.drawImage(Assets.lost, (this.width / 2), (this.height / 2), 400 , 400, null);
-    }
-    
+
     private void drawScore(Graphics g){
         String a = Integer.toString(score);
         g.setColor(Color.BLACK);
         g.setFont(new Font ("arial",Font.PLAIN, 50));
-        
+ 
         g.drawString(a,20,450);
         
     }
@@ -251,11 +269,13 @@ public class Game implements Runnable {
             if (lost){
                 drawLost(g);
             }
+            if (pause){
+                drawPause(g);
+            }
             
             bs.show();
             g.dispose();
         }
-       
     }
     
     
@@ -388,8 +408,38 @@ public class Game implements Runnable {
         this.score = score;
     }
 
- 
-    
+     /**
+     * To get the width of the game window
+     * @return an <code>int</code> value with the width
+     */
+    public int getWidth() {
+        return width;
+    }
 
+    /**
+     * To get the height of the game window
+     * @return an <code>int</code> value with the height
+     */
+    public int getHeight() {
+        return height;
+    }
 
+    public boolean isStarted() {
+        return started;
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
+    }
+
+    private void sleep() {
+        try        
+            {
+                Thread.sleep(100);
+            } 
+            catch(InterruptedException ex) 
+            {
+                Thread.currentThread().interrupt();
+            }
+    }
 }

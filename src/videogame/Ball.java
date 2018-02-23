@@ -26,7 +26,33 @@ public class Ball extends Item{
         this.game = game;
     }
 
-    public int getSpeedX() {
+
+    
+    @Override
+    public void tick() {
+        // moving bar depending on keys <-  ->
+        setX(getX() + getSpeedX());
+        setY(getY() + getSpeedY());
+       
+        // collision with walls  X
+        if (getX() + 20 >= game.getWidth()) {
+            setX(game.getWidth() - 20);
+            setSpeedX(getSpeedX() * -1);
+        }else if (getX() <= 0) {
+            setX(0);
+            setSpeedX(getSpeedX() * -1);
+        }
+    }
+
+    @Override
+    public void render(Graphics g) {
+        g.setColor(Color.white);
+        g.fillOval(getX(), getY(), getWidth(), getHeight());
+    }
+    
+    
+    
+        public int getSpeedX() {
         return speedX;
     }
 
@@ -42,42 +68,4 @@ public class Ball extends Item{
         this.speedY = speedY;
     }
 
-    
-    @Override
-    public void tick() {
-        // moving bar depending on keys <-  ->
-        setX(getX() + getSpeedX());
-        setY(getY() + getSpeedY());
-        
-        
-        // collision with walls  X
-        if (getX() + 20 >= game.getWidth()) {
-            setX(game.getWidth() - 20);
-            setSpeedX(getSpeedX() * -1);
-        }
-        
-        else if (getX() <= 0) {
-            setX(0);
-            setSpeedX(getSpeedX() * -1);
-        }
-        
-        // collision with walls Y
-        if(getY() >= game.getHeight()){
-           // game.setGameover(true);
-           game.setVidas(game.getVidas() - 1);
-           game.setLost(true);
-           setSpeedY(0);
-           setSpeedX(0);
-           setY(game.getHeight() - 1);
-        }
-        
-        
-
-    }
-
-    @Override
-    public void render(Graphics g) {
-        g.setColor(Color.white);
-        g.fillOval(getX(), getY(), getWidth(), getHeight());
-    }
 }

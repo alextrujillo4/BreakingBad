@@ -15,6 +15,7 @@ public class Assets {
     public static BufferedImage background; // to store background image
     public static BufferedImage bar;     // to store the bar image
     public static BufferedImage gameOver;
+    public static BufferedImage pause;
     
     public static BufferedImage lives3;
     public static BufferedImage lives2;
@@ -39,6 +40,7 @@ public class Assets {
         livesNone= ImageLoader.loadImage("/images/novidas.png");
         
         lost= ImageLoader.loadImage("/images/Lost.png");
+        pause= ImageLoader.loadImage("/images/pause.png");
     }
     
 }
