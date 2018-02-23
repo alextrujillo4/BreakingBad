@@ -9,6 +9,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
+import static java.lang.Integer.max;
+import static java.lang.Math.random;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
@@ -55,7 +57,7 @@ public class Game implements Runnable {
         keyManager = new KeyManager();
         score = 0;
         lost = false;
-        vidas = 1;
+        vidas = 3;
     }
     
 
@@ -113,7 +115,8 @@ public class Game implements Runnable {
         if(!gameover){
             if(!lost){
                 //To pause the game
-                if(!pause){
+                pause = this.getKeyManager().p;
+                if(!(pause)){ //IF IS NOT PAUSED
                     // if space and game has not started
                     if (this.getKeyManager().space && !this.isStarted()) {
                         this.setStarted(true);
@@ -138,8 +141,11 @@ public class Game implements Runnable {
                         Brick brick = (Brick) bricks.get(i);
                         if (brick != null ){
                             if (ball.intersects(brick)) {
-
-                                ball.setSpeedY(ball.getSpeedY()*  -1);
+                                if(brick.isPower()){
+                                    bar.setWidth(bar.getWidth() +bar.getWidth()/4 );
+                                    score += 10;
+                                }
+                                ball.setSpeedY((ball.getSpeedY() *  - 1)+3);
                                 bricks.remove(brick);
                                 i--;
                                 score += 5;
@@ -167,20 +173,13 @@ public class Game implements Runnable {
                        ball.setY(getHeight() - 1);
                     } 
                     
-                    if(this.getKeyManager().isP()){
-                        sleep();
-                        pause = true;
-                    }
+                    //if(this.getKeyManager().isP()){
+                      //  sleep();
+                        //pause = true;
+                   // }
                     
                     
-                }else{
-                    //When game is paused, keymanager keeps listening for "P"
-                    if(this.getKeyManager().isP()){
-                        sleep();
-                        pause = false;
-                    }
-                 
-                }//END PAUSE********
+                }
             }else{
                //When game is LOST (live - 1), keymanager keeps listening for "J" ro init again
                 if(this.getKeyManager().isJ()){
@@ -307,6 +306,50 @@ public class Game implements Runnable {
         }
     }
 
+
+    private void sleep() {
+        try        
+            {
+                Thread.sleep(150);
+            } 
+            catch(InterruptedException ex) 
+            {
+                Thread.currentThread().interrupt();
+            }
+    }
+
+    private void generateEnemies() {
+        //Generate New Enemies
+        bricks = new ArrayList<Brick>();
+        int width_brick = getWidth() / 10 - 6;
+        int height_brick = getHeight() / 3 / 5  - 10;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 5; j++) {
+                double randomNum = Math.random() * ( 3 );
+                Brick brick = new Brick(i * (width_brick + 3) + 15 , 
+                        j * (height_brick + 5) + 15 , width_brick, height_brick, this);
+                
+                if(randomNum >= 2.5) 
+                    brick.setPower(true);
+                
+                bricks.add(brick);
+            }
+        }
+    }
+
+    private void resetBar() {
+        bar.setX(getWidth() / 2 - 50);
+        bar.setY(getHeight() - 100);
+    }
+
+    private void resetBall() {
+        //Reset posicion og ball and bar
+        ball.setX(getWidth() / 2 - 10);
+        ball.setY(getHeight() - 120);
+    }
+    
+    
+    
     public BufferStrategy getBs() {
         return bs;
     }
@@ -433,41 +476,5 @@ public class Game implements Runnable {
 
     public void setStarted(boolean started) {
         this.started = started;
-    }
-
-    private void sleep() {
-        try        
-            {
-                Thread.sleep(100);
-            } 
-            catch(InterruptedException ex) 
-            {
-                Thread.currentThread().interrupt();
-            }
-    }
-
-    private void generateEnemies() {
-        //Generate New Enemies
-        bricks = new ArrayList<Brick>();
-        int width_brick = getWidth() / 10 - 6;
-        int height_brick = getHeight() / 3 / 5  - 10;
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 5; j++) {
-                Brick brick = new Brick(i * (width_brick + 3) + 15 , 
-                        j * (height_brick + 5) + 15 , width_brick, height_brick, this);
-                bricks.add(brick);
-            }
-        }
-    }
-
-    private void resetBar() {
-        bar.setX(getWidth() / 2 - 50);
-        bar.setY(getHeight() - 100);
-    }
-
-    private void resetBall() {
-        //Reset posicion og ball and bar
-        ball.setX(getWidth() / 2 - 10);
-        ball.setY(getHeight() - 120);
     }
 }

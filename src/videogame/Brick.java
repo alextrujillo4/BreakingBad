@@ -17,10 +17,14 @@ import java.awt.Graphics;
 public class Brick extends Item{
 
     private Game game;
+    private boolean power;
+
+
     
     public Brick(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         this.game = game;
+        this.power = false;
     }
 
     @Override
@@ -29,8 +33,35 @@ public class Brick extends Item{
 
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.blue);
+        if(!power){
+            g.setColor(Color.blue);
+        }else{
+        g.setColor(Color.red);
+        }
         g.fillRect(getX(), getY(), getWidth(), getHeight());
+    }
+    
+    
+    public void changeBrickColor(){
+    
+    
+    }
+    
+    
+     public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public boolean isPower() {
+        return power;
+    }
+
+    public void setPower(boolean power) {
+        this.power = power;
     }
 }
     
