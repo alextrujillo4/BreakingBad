@@ -172,7 +172,7 @@ public class Game implements Runnable {
                     }
 
                     // check collision ball versus bar
-                    if (ball.intersects(bar)) {
+                    if (ball.intersects(bar) || ball.intersects(bar.getX()+bar.getWidth())) {
                         ball.setSpeedY(ball.getSpeedY() * -1);
                     }
 
@@ -191,7 +191,7 @@ public class Game implements Runnable {
                        ball.setSpeedX(0);
                        ball.setY(getHeight() - 1);
                     } 
-                    if(bricks.size() <=49)
+                    if(bricks.size() ==0)
                            win=true;
                     
                     //if(this.getKeyManager().isP()){
