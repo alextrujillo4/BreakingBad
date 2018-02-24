@@ -73,5 +73,19 @@ public class Ball extends Item{
     public void setSpeedY(int speedY) {
         this.speedY = speedY;
     }
+    
+    private void increaseSpeed(){
+        if(speedY <= 8){
+            speedY = speedY --;
+            speedX = speedX ++;
+        }
+
+    
+    }
+    
+    private void resetSpeed(){
+        speedY = -3;
+        speedX = 3;
+    }
 
 }

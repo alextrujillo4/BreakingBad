@@ -25,14 +25,14 @@ public class Bar extends Item{
     public void tick() {
         // moving bar depending on keys <-  ->
         if (game.getKeyManager().left) {
-           setX(getX() - 6);
+           setX(getX() - 8);
         }
         if (game.getKeyManager().right) {
-           setX(getX() + 6);
+           setX(getX() + 8);
         }
         // collision with walls
-        if (getX()+ 150 >= game.getWidth()) {
-            setX(game.getWidth() - 150);
+        if (getX()+ getWidth() >= game.getWidth()) {
+            setX(game.getWidth() - getWidth());
         }
         else if (getX() <= 0) {
             setX(0);

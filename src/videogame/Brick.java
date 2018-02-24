@@ -17,14 +17,14 @@ import java.awt.Graphics;
 public class Brick extends Item{
 
     private Game game;
-    private boolean power;
+    private int power;
 
 
     
     public Brick(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         this.game = game;
-        this.power = false;
+        this.power = 0;//0 significa Normal..... 1 = bueno ... 2 = malo
     }
 
     @Override
@@ -33,7 +33,7 @@ public class Brick extends Item{
 
     @Override
     public void render(Graphics g) {
-        if(!power){
+        if(power == 1){
             g.setColor(Color.blue);
         }else{
         g.setColor(Color.red);
@@ -56,11 +56,11 @@ public class Brick extends Item{
         this.game = game;
     }
 
-    public boolean isPower() {
+    public int getPower() {
         return power;
     }
 
-    public void setPower(boolean power) {
+    public void setPower(int power) {
         this.power = power;
     }
 }

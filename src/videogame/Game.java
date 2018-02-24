@@ -130,8 +130,8 @@ public class Game implements Runnable {
                     // if space and game has not started
                     if (this.getKeyManager().space && !this.isStarted()) {
                         this.setStarted(true);
-                        ball.setSpeedX(2);
-                        ball.setSpeedY(-2);
+                        ball.setSpeedX(3);
+                        ball.setSpeedY(-3);
                     } 
 
                     // moving bar
@@ -151,7 +151,7 @@ public class Game implements Runnable {
                         Brick brick = (Brick) bricks.get(i);
                         if (brick != null ){
                             if (ball.intersects(brick)) {
-                                if(brick.isPower()){
+                                if(brick.getPower() == 1){
                                     bar.setWidth(bar.getWidth() +bar.getWidth()/4 );
                                     ball.setSpeedY((ball.getSpeedY() *  - 1)+3);
                                     score += 10;
@@ -175,6 +175,8 @@ public class Game implements Runnable {
                     if (ball.intersects(bar)) {
                         ball.setSpeedY(ball.getSpeedY() * -1);
                     }
+                    
+                    
 
                     // collision with walls Y
                     if(ball.getY() >= getHeight()){
@@ -191,7 +193,7 @@ public class Game implements Runnable {
                        ball.setSpeedX(0);
                        ball.setY(getHeight() - 1);
                     } 
-                    if(bricks.size() <=49)
+                    if(bricks.size() == 0)
                            win=true;
                     
                     //if(this.getKeyManager().isP()){
@@ -364,12 +366,18 @@ public class Game implements Runnable {
                         j * (height_brick + 5) + 15 , width_brick, height_brick, this);
                 
                 if(randomNum >= 2.5) 
-                    brick.setPower(true);
+                    brick.setPower(1);
+                
+                //if(randomNum >= 2 && randomNum < 2.5 ) 
+                    //brick.setBadPower(true);
+                
                 
                 bricks.add(brick);
             }
         }
     }
+    
+ 
 
     private void resetBar() {
         bar.setX(getWidth() / 2 - 50);
