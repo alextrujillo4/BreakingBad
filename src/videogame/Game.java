@@ -42,6 +42,7 @@ public class Game implements Runnable {
     private int score;
     private boolean win;
     private int cont;
+    SoundClipTest sound;
     
     /**
      * to create title, width and height and set the game is still not running
@@ -149,17 +150,20 @@ public class Game implements Runnable {
                             if (ball.intersects(brick)) {
                                  if(brick.getPower()==0){
                                 ball.setSpeedY((ball.getSpeedY() *  - 1));
+                                 sound = new SoundClipTest("correct");
                                 }
                                  else if(brick.getPower() == 1){
                                     bar.setWidth(bar.getWidth() + bar.getWidth()/4 );
                                     ball.setSpeedY((ball.getSpeedY() *  - 1));
                                     score += 10;
+                                    sound = new SoundClipTest("correct");
                                 }
                                 else if(brick.getPower()==2){
                                     bar.setWidth(100);
+                                    score -= 10;
                                     ball.setSpeedY((ball.getSpeedY() *  - 1));
-                                }
-                                
+                                    sound = new SoundClipTest("boom");
+                                }                      
                                 bricks.remove(brick);
                                 i--;
                                 score += 5;
@@ -195,6 +199,7 @@ public class Game implements Runnable {
                     // collision with walls Y
                     if(ball.getY() >= getHeight()){
                        // game.setGameover(true);
+                       sound = new SoundClipTest("boom");
                        setVidas(getVidas() - 1);
                        //****GAMEOVER IF
                        if(getVidas() == 0)
@@ -288,9 +293,9 @@ public class Game implements Runnable {
     private void drawScore(Graphics g){
         String a = Integer.toString(score);
         g.setColor(Color.BLACK);
-        g.setFont(new Font ("arial",Font.PLAIN, 50));
+        g.setFont(new Font ("arial",Font.PLAIN, 30));
  
-        g.drawString(a,20,450);
+        g.drawString("Puntos: " + a,20,475);
         
     }
     
