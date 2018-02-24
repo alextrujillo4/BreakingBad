@@ -92,12 +92,14 @@ public abstract class Item {
      */
     public abstract void render(Graphics g);
     
-    private Rectangle getBounds() {
+    Rectangle getBounds() {
         return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
-    
+        
     public boolean intersects(Object obj) {
         return (obj instanceof Item && 
                 this.getBounds().intersects(((Item) obj).getBounds()));
     }
+    
+    
 }

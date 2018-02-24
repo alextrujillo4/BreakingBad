@@ -32,7 +32,8 @@ public class Game implements Runnable {
     private boolean started;        // to start the game
     private boolean gameover;
     private Bar bar;          // to use a bar
-    private Ball ball;              // little ball
+    private Ball ball; 
+    //Bar bar2;// little ball
     private int vidas ;
     private boolean pause;
     private boolean lost;
@@ -72,7 +73,9 @@ public class Game implements Runnable {
     private void init() {
          display = new Display(title, getWidth(), getHeight());  
          Assets.init();
-         bar = new Bar(getWidth() / 2 - 50, getHeight() - 100, 100, 25, this);
+         bar = new Bar(getWidth() / 2 - 50, getHeight() - 100, 100, 15, this);
+         //bar2 = new Bar (bar.getX(), bar.getY() + bar.getHeight()/2 , bar.getWidth(), bar.getHeight() - bar.getHeight()/2, this);
+         //bar2.setColor();
          ball = new Ball(getWidth() / 2 - 10, getHeight() - 120, 20, 20, 0, 0, this);
          generateEnemies();
          display.getJframe().addKeyListener(keyManager);
@@ -136,6 +139,7 @@ public class Game implements Runnable {
 
                     // moving bar
                     bar.tick();
+                    //bar2.tick();
 
                     // if game has started
                     if (this.isStarted()) {
@@ -164,19 +168,28 @@ public class Game implements Runnable {
                             }
                         }
                     }
-                    if(cont>5){
-                        bar.setWidth(bar.getWidth()- bar.getWidth()/4);
-                        
-                        cont=0;
-                        
-                    }
 
-                    // check collision ball versus bar
-                    if (ball.intersects(bar)) {
+                    if(bar.intersects(ball)){
+                         if(ball.getX() > bar.getX() && ball.getX() + 
+                                 ball.getWidth() <= bar.getX() + bar.getWidth()/4){
+                            if(ball.getSpeedX() > 0){
+                                ball.setSpeedX(ball.getSpeedX() *-1);
+                            }else{
+                               ball.setSpeedX(ball.getSpeedX() *1); 
+                            }
+                         }else if(ball.getX() > bar.getX() + bar.getWidth()/4
+                                &&   ball.getX() + ball.getWidth() <=  bar.getX()
+                                 +bar.getWidth()){
+                            if(ball.getSpeedX() > 0){
+                                ball.setSpeedX(ball.getSpeedX() *1);
+                            }else{
+                               ball.setSpeedX(ball.getSpeedX() *-1); 
+                            }
+                        }
                         ball.setSpeedY(ball.getSpeedY() * -1);
                     }
                     
-                    
+
 
                     // collision with walls Y
                     if(ball.getY() >= getHeight()){
@@ -289,6 +302,7 @@ public class Game implements Runnable {
             
             if(!gameover){
                 bar.render(g);
+                //bar2.render(g);
                 ball.render(g);
                 for (Brick brick : bricks) {
                     brick.render(g);

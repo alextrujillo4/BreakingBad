@@ -7,6 +7,7 @@ package videogame;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 
 /**
  *
@@ -15,10 +16,12 @@ import java.awt.Graphics;
 public class Bar extends Item{
 
     private Game game;
+    public boolean color;
     
     public Bar(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         this.game = game;
+        color = false;
     }
 
     @Override
@@ -40,9 +43,28 @@ public class Bar extends Item{
 
     }
 
+         private Rectangle getAboveBounds(){
+        return new Rectangle (getX(), getY() + getHeight()/2 , getWidth(), getHeight() - getHeight()/2);
+    }
+    
+      public boolean intersecsAbove(Object obj){
+          return (obj instanceof Item && 
+                this.getAboveBounds().intersects(((Item) obj).getBounds()));
+     }
+     
+     public void setColor(){
+         color = true;
+     }
+     
+     
+     
     @Override
     public void render(Graphics g) {
         g.setColor(Color.red);
+        
+        if(color)
+            g.setColor(Color.black);
+            
         g.fillRect(getX(), getY(), getWidth(), getHeight());
     }
 }
