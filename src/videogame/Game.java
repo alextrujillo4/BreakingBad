@@ -73,9 +73,7 @@ public class Game implements Runnable {
     private void init() {
          display = new Display(title, getWidth(), getHeight());  
          Assets.init();
-         bar = new Bar(getWidth() / 2 - 50, getHeight() - 100, 100, 15, this);
-         //bar2 = new Bar (bar.getX(), bar.getY() + bar.getHeight()/2 , bar.getWidth(), bar.getHeight() - bar.getHeight()/2, this);
-         //bar2.setColor();
+         bar = new Bar(getWidth() / 2 - 50, getHeight() - 100, 100, 20, this);
          ball = new Ball(getWidth() / 2 - 10, getHeight() - 120, 20, 20, 0, 0, this);
          generateEnemies();
          display.getJframe().addKeyListener(keyManager);
@@ -257,12 +255,12 @@ public class Game implements Runnable {
     
     private void drawWin(Graphics g){
         //show Win
-        g.drawImage(Assets.win,0,0,getWidth(), getHeight(), null);
+        g.drawImage(Assets.win,(this.width / 2) - 200, (this.height / 2) - 200, 400 , 400, null);
     }
     
     private void drawGameOver(Graphics g){
        // Show Game Over
-        g.drawImage(Assets.gameOver, 0,0, getWidth(), getHeight(), null);
+        g.drawImage(Assets.gameOver,(this.width / 2) - 200, (this.height / 2) - 200, 400 , 400, null);
     }
     
     private void drawLost(Graphics g){

@@ -60,11 +60,6 @@ public class Bar extends Item{
      
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.red);
-        
-        if(color)
-            g.setColor(Color.black);
-            
-        g.fillRect(getX(), getY(), getWidth(), getHeight());
+        g.drawImage(Assets.bar, getX(), getY(), getWidth(), getHeight(), null);
     }
 }

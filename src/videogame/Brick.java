@@ -19,8 +19,6 @@ public class Brick extends Item{
     private Game game;
     private int power;
 
-
-    
     public Brick(int x, int y, int width, int height, Game game) {
         super(x, y, width, height);
         this.game = game;
@@ -33,23 +31,22 @@ public class Brick extends Item{
 
     @Override
     public void render(Graphics g) {
-        if(power == 0)
-            g.setColor(Color.blue);
-        else if(power ==1){
-            g.setColor(Color.red);
+        switch (power) {
+            case 0:
+                g.drawImage(Assets.brick0, getX(), getY(), getWidth(), getHeight(), null);
+                break;
+            case 1:
+                g.drawImage(Assets.brick1, getX(), getY(), getWidth(), getHeight(), null);
+                break;
+            case 2:
+                g.drawImage(Assets.brick2, getX(), getY(), getWidth(), getHeight(), null);
+                break;
+            default:
+                break;
         }
-        else if(power==2){
-            g.setColor(Color.green);
-        }
-        
-        g.fillRect(getX(), getY(), getWidth(), getHeight());
     }
     
     
-    public void changeBrickColor(){
-    
-    
-    }
     
     
      public Game getGame() {
