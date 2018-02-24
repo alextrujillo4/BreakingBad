@@ -31,7 +31,7 @@ public class Assets {
      * initializing the images of the game
      */
     public static void init() {
-        background = ImageLoader.loadImage("/images/Background.jpg");
+        background = ImageLoader.loadImage("/images/wallpaper.gif");
         bar = ImageLoader.loadImage("/images/mario.png");
         gameOver= ImageLoader.loadImage("/images/GameOver.png");
         win = ImageLoader.loadImage("/images/ganar.png");

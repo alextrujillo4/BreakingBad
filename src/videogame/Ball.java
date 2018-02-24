@@ -52,7 +52,7 @@ public class Ball extends Item{
 
     @Override
     public void render(Graphics g) {
-        g.setColor(Color.white);
+        g.setColor(Color.yellow);
         g.fillOval(getX(), getY(), getWidth(), getHeight());
     }
     
