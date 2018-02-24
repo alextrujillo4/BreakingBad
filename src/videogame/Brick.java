@@ -33,11 +33,15 @@ public class Brick extends Item{
 
     @Override
     public void render(Graphics g) {
-        if(power == 1){
+        if(power == 0)
             g.setColor(Color.blue);
-        }else{
-        g.setColor(Color.red);
+        else if(power ==1){
+            g.setColor(Color.red);
         }
+        else if(power==2){
+            g.setColor(Color.green);
+        }
+        
         g.fillRect(getX(), getY(), getWidth(), getHeight());
     }
     
