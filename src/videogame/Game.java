@@ -119,24 +119,19 @@ public class Game implements Runnable {
        if(!win){
         if(!gameover){
             if(!lost){
-                
-
                 //To pause the game
                 pause = this.getKeyManager().p;
-               
+               //bar.setWidth(100);
                 if(!(pause)){ //IF IS NOT PAUSED
                     
-                   
                     // if space and game has not started
                     if (this.getKeyManager().space && !this.isStarted()) {
                         this.setStarted(true);
-                        ball.setSpeedX(2);
-                        ball.setSpeedY(-2);
+                        ball.setSpeedX(3);
+                        ball.setSpeedY(-3);
                     } 
-
                     // moving bar
                     bar.tick();
-
                     // if game has started
                     if (this.isStarted()) {
                         // moving the ball
@@ -151,30 +146,39 @@ public class Game implements Runnable {
                         Brick brick = (Brick) bricks.get(i);
                         if (brick != null ){
                             if (ball.intersects(brick)) {
-                                if(brick.isPower()){
+                                 if(brick.getPower()==0){
+                                ball.setSpeedY((ball.getSpeedY() *  - 1));
+                                }
+                                 else if(brick.getPower() == 1){
                                     bar.setWidth(bar.getWidth() +bar.getWidth()/4 );
                                     ball.setSpeedY((ball.getSpeedY() *  - 1)+3);
                                     score += 10;
                                 }
-                                ball.setSpeedY((ball.getSpeedY() *  - 1));
+                                else if(brick.getPower()==2){
+                                    bar.setWidth(100);
+                                    ball.setSpeedY((ball.getSpeedY() *  - 1));
+                                }
+                                
                                 bricks.remove(brick);
                                 i--;
                                 score += 5;
-                                cont+=1;
+                                //cont+=1;
                             }
                         }
                     }
-                    if(cont>5){
-                        bar.setWidth(bar.getWidth()- bar.getWidth()/4);
+                    //if(cont>5){
+                        //bar.setWidth(bar.getWidth()- bar.getWidth()/4);
                         
-                        cont=0;
+                      //  cont=0;
                         
-                    }
+                    //
 
                     // check collision ball versus bar
                     if (ball.intersects(bar) || ball.intersects(bar.getX()+bar.getWidth())) {
                         ball.setSpeedY(ball.getSpeedY() * -1);
                     }
+                    
+                    
 
                     // collision with walls Y
                     if(ball.getY() >= getHeight()){
@@ -191,15 +195,9 @@ public class Game implements Runnable {
                        ball.setSpeedX(0);
                        ball.setY(getHeight() - 1);
                     } 
-                    if(bricks.size() ==0)
-                           win=true;
-                    
-                    //if(this.getKeyManager().isP()){
-                      //  sleep();
-                        //pause = true;
-                   // }
-                    
-                    
+                    //when there's no brick , the player will win 
+                    if(bricks.size() == 0)
+                         win=true;
                 }
 
             }else{
@@ -211,20 +209,35 @@ public class Game implements Runnable {
                     resetBar();
                 } 
             }//END LOST********
-        }else{
-            //When GAMEOVER  keeps listening for "R" to reinit game
+        } 
+         else{
+            //When GAMEOVER & WIN  keeps listening for "R" to reinit game
             if(this.getKeyManager().isR()){
                 gameover = false;
                 started = false;
+                win = false;
                 vidas = 3;
                 score = 0;
                 resetBall();
                 resetBar();
                 generateEnemies();
             }
-        }  //END GAMEOVER ********
+        }   
         
        }
+       else{
+            //When GAMEOVER & WIN  keeps listening for "R" to reinit game
+            if(this.getKeyManager().isR()){
+                gameover = false;
+                started = false;
+                win = false;
+                vidas = 3;
+                score = 0;
+                resetBall();
+                resetBar();
+                generateEnemies();
+            }
+        }
     }
 //END TICK();********
     
@@ -364,16 +377,23 @@ public class Game implements Runnable {
                         j * (height_brick + 5) + 15 , width_brick, height_brick, this);
                 
                 if(randomNum >= 2.5) 
-                    brick.setPower(true);
+                    brick.setPower(1);
+                
+                if(randomNum >= 2 && randomNum < 2.5 ) 
+                    brick.setPower(2);
+                
                 
                 bricks.add(brick);
             }
         }
     }
+    
+ 
 
     private void resetBar() {
         bar.setX(getWidth() / 2 - 50);
         bar.setY(getHeight() - 100);
+        bar.setWidth(100);
     }
 
     private void resetBall() {
