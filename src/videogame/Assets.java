@@ -14,6 +14,11 @@ import java.awt.image.BufferedImage;
 public class Assets {
     public static BufferedImage background; // to store background image
     public static BufferedImage bar;     // to store the bar image
+    
+     public static BufferedImage brick0; 
+     public static BufferedImage brick1; 
+     public static BufferedImage brick2; 
+       
     public static BufferedImage gameOver;
     public static BufferedImage pause;
     public static BufferedImage win;
@@ -31,8 +36,15 @@ public class Assets {
      * initializing the images of the game
      */
     public static void init() {
-        background = ImageLoader.loadImage("/images/wallpaper.gif");
-        bar = ImageLoader.loadImage("/images/mario.png");
+
+        background = ImageLoader.loadImage("/images/Background.png");
+        bar = ImageLoader.loadImage("/images/player.png");
+        
+        brick0 = ImageLoader.loadImage("/images/brick0.png");
+        brick1 = ImageLoader.loadImage("/images/brick1.png");
+        brick2 = ImageLoader.loadImage("/images/brick2.png");
+        
+
         gameOver= ImageLoader.loadImage("/images/GameOver.png");
         win = ImageLoader.loadImage("/images/ganar.png");
         

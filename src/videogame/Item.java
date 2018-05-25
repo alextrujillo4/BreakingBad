@@ -21,8 +21,8 @@ public abstract class Item {
     
     /**
      * Set the initial values to create the item
-     * @param x <b>x</b> position of the object
-     * @param y <b>y</b> position of the object
+     * @param x x position of the object
+     * @param y y position of the object
      */
     public Item(int x, int y, int width, int height) {
         this.x = x;
@@ -92,12 +92,14 @@ public abstract class Item {
      */
     public abstract void render(Graphics g);
     
-    private Rectangle getBounds() {
+    Rectangle getBounds() {
         return new Rectangle(getX(), getY(), getWidth(), getHeight());
     }
-    
+        
     public boolean intersects(Object obj) {
         return (obj instanceof Item && 
                 this.getBounds().intersects(((Item) obj).getBounds()));
     }
+    
+    
 }
